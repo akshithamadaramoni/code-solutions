@@ -1,0 +1,24 @@
+from typing import List
+from collections import Counter
+
+class Solution:
+    def maxOperations(self, nums: List[int], k: int) -> int:
+        count = Counter(nums)
+        operations = 0
+
+        for num in list(count.keys()):
+            target = k - num
+
+            if target not in count:
+                continue
+
+            if num == target:
+                operations += count[num] // 2
+            else:
+                pairs = min(count[num], count[target])
+                operations += pairs
+                count[target] = 0  # avoid double counting
+
+            count[num] = 0
+
+        return operations
