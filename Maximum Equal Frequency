@@ -1,0 +1,30 @@
+class Solution:
+    def maxEqualFreq(self, nums: List[int]) -> int:
+        cnt = defaultdict(int)     
+        freq = defaultdict(int)    
+        maxF = 0
+        res = 0
+
+        for i, x in enumerate(nums):
+            old = cnt[x]
+            if old > 0:
+                freq[old] -= 1
+
+            cnt[x] += 1
+            new = cnt[x]
+            freq[new] += 1
+            maxF = max(maxF, new)
+
+            n = i + 1
+
+            
+            if maxF == 1:
+                res = n
+            
+            elif freq[maxF] == 1 and freq[maxF-1] * (maxF-1) + maxF == n:
+                res = n
+          
+            elif freq[1] == 1 and freq[maxF] * maxF + 1 == n:
+                res = n
+
+        return res
