@@ -1,0 +1,56 @@
+class Solution:
+    def get_max_product_from_subarray(self, peak_i, first_negative_num_i, last_negative_num_i, prefix_product_nums):
+        if prefix_product_nums[peak_i] >= 0:
+            return float('-inf')
+
+        if first_negative_num_i == last_negative_num_i:
+            val1 = prefix_product_nums[first_negative_num_i - 1] if first_negative_num_i != 0 else float('-inf')
+            val2 = abs(prefix_product_nums[peak_i]) / abs(prefix_product_nums[first_negative_num_i]) if peak_i != first_negative_num_i else float('-inf')
+            result = max(val1, val2)
+        else:
+            left_product = abs(prefix_product_nums[first_negative_num_i])
+            right_product = abs(prefix_product_nums[peak_i]) / abs(prefix_product_nums[last_negative_num_i - 1])
+
+            if left_product >= right_product:
+                result = prefix_product_nums[last_negative_num_i - 1]
+            else:
+                result = abs(prefix_product_nums[peak_i]) / left_product
+            
+        return int(result) if result != float('-inf') else float('-inf')
+
+    def maxProduct(self, nums: List[int]) -> int:
+        max_product = max(nums)
+        product = 1
+        first_negative_num_i = None
+        last_negative_num_i = None
+        prefix_product_nums = []
+
+        left_prefix_product_without_first_negative = None
+        current_peak_product = None
+
+        for i in range(len(nums)):
+            if nums[i] == 0:
+                prefix_product_nums.append(0)
+                product = 1
+
+                if i != 0:
+                    max_product = max(max_product, self.get_max_product_from_subarray(i - 1, first_negative_num_i, last_negative_num_i, prefix_product_nums))
+                
+                first_negative_num_i = None
+                last_negative_num_i = None
+                continue
+            
+            if nums[i] < 0:
+                if first_negative_num_i == None:
+                    first_negative_num_i = i
+                
+                last_negative_num_i = i
+            
+            product *= nums[i]
+            prefix_product_nums.append(product)
+            max_product = max(max_product, product)
+            
+        if nums[-1] != 0:
+            max_product = max(max_product, self.get_max_product_from_subarray(i, first_negative_num_i, last_negative_num_i, prefix_product_nums))
+
+        return max_product
