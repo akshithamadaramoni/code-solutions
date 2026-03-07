@@ -1,0 +1,30 @@
+from typing import List
+
+class Solution:
+    def minFlips(self, s: str) -> int:
+        n = len(s)
+        s = s + s  # simulate all rotations by doubling the string
+        alt1 = ''.join(['0' if i % 2 == 0 else '1' for i in range(2 * n)])
+        alt2 = ''.join(['1' if i % 2 == 0 else '0' for i in range(2 * n)])
+        
+        min_flips = float('inf')
+        diff1 = diff2 = 0
+        left = 0
+
+        for right in range(2 * n):
+            if s[right] != alt1[right]:
+                diff1 += 1
+            if s[right] != alt2[right]:
+                diff2 += 1
+
+            if right - left + 1 > n:
+                if s[left] != alt1[left]:
+                    diff1 -= 1
+                if s[left] != alt2[left]:
+                    diff2 -= 1
+                left += 1
+
+            if right - left + 1 == n:
+                min_flips = min(min_flips, diff1, diff2)
+
+        return min_flips
